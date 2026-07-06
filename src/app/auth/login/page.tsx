@@ -138,7 +138,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-500 mt-4">
             Want to book services?{' '}
-            <a href="http://localhost:3001" className="text-blue-600 font-semibold hover:underline">Customer App →</a>
+            <a href="https://homeserve-customer-website.onrender.com" className="text-blue-600 font-semibold hover:underline">Customer App →</a>
           </p>
         </div>
       </div>
