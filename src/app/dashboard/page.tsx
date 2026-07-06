@@ -162,7 +162,7 @@ export default function DashboardPage() {
           )}
 
           {/* Wallet */}
-          <div className="card bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
+          <div className="card bg-gradient-to-br from-orange-500 to-orange-700 text-white">
             <p className="text-blue-200 text-xs mb-1">Wallet Balance</p>
             <p className="text-2xl font-bold mb-3">{formatCurrency(walletBalance)}</p>
             <Link href="/earnings" className="inline-flex items-center gap-1.5 text-white/80 text-sm font-medium hover:text-white transition-colors">

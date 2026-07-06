@@ -32,8 +32,14 @@ function OtpForm() {
       const res = await authService.verifyOtp(phone, otp);
       const { token, worker, isNew } = res.data.data;
       setAuth(worker, token);
-      router.push(isNew ? "/auth/complete-profile" : "/dashboard");
       toast.success("Logged in successfully!");
+      if (isNew || !worker.name) {
+        router.push("/auth/complete-profile");
+      } else if (worker.status && worker.status !== "APPROVED") {
+        router.push("/auth/pending-review");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       toast.error("Incorrect OTP. Please try again.");
       setOtp("");

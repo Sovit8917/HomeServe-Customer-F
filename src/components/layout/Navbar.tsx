@@ -92,7 +92,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen((o) => !o)}
                   className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl hover:bg-white/70 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">
                     {getInitials(user.name)}
                   </div>
                   <span className="hidden sm:flex items-center gap-1 text-sm font-medium text-gray-700">

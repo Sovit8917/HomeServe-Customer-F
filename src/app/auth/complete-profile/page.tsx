@@ -52,13 +52,13 @@ export default function CompleteProfilePage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900">Complete your profile</h1>
-              <p className="text-sm text-gray-500">Step 1 of 2 — Basic details</p>
+              <p className="text-sm text-gray-500">Step 1 of 3 — Basic details</p>
             </div>
           </div>
 
           {/* Progress bar */}
           <div className="w-full bg-gray-100 rounded-full h-1.5 mb-6">
-            <div className="bg-blue-600 h-1.5 rounded-full w-1/2" />
+            <div className="bg-blue-600 h-1.5 rounded-full w-1/3" />
           </div>
 
           <div className="space-y-4">

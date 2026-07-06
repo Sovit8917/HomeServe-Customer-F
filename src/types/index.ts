@@ -1,4 +1,6 @@
 // ─── Auth ────────────────────────────────────────────────────────────────────
+export type WorkerStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+
 export interface WorkerUser {
   id: string;
   phone: string;
@@ -14,6 +16,7 @@ export interface WorkerUser {
   experience: number;
   isOnline: boolean;
   isApproved?: boolean;
+  status?: WorkerStatus;
   serviceRadius: number;
   createdAt: string;
 }
@@ -138,12 +141,22 @@ export interface Notification {
 // ─── Support ─────────────────────────────────────────────────────────────────
 export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 
+export interface TicketMessage {
+  id: string;
+  ticketId: string;
+  senderId: string;
+  senderType: 'USER' | 'WORKER' | 'ADMIN';
+  message: string;
+  createdAt: string;
+}
+
 export interface SupportTicket {
   id: string;
   subject: string;
   description: string;
   status: TicketStatus;
   createdAt: string;
+  messages?: TicketMessage[];
 }
 
 // ─── Skills / Documents ──────────────────────────────────────────────────────
@@ -151,5 +164,6 @@ export interface WorkerDocument {
   id: string;
   type: string;
   url: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  isVerified: boolean;
+  createdAt: string;
 }

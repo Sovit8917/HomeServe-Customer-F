@@ -32,8 +32,7 @@ export default function SelectServicesPage() {
     setSaving(true);
     try {
       await workersService.updateServices(selected);
-      toast.success('You’re all set!');
-      router.replace('/dashboard');
+      router.replace('/auth/documents');
     } catch {
       toast.error('Failed to save services');
     } finally {
@@ -64,13 +63,13 @@ export default function SelectServicesPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900">What services do you offer?</h1>
-              <p className="text-sm text-gray-500">Step 2 of 2 — This decides which jobs you'll see</p>
+              <p className="text-sm text-gray-500">Step 2 of 3 — This decides which jobs you'll see</p>
             </div>
           </div>
 
           {/* Progress bar */}
           <div className="w-full bg-gray-100 rounded-full h-1.5 mb-6">
-            <div className="bg-blue-600 h-1.5 rounded-full w-full" />
+            <div className="bg-blue-600 h-1.5 rounded-full w-2/3" />
           </div>
 
           {loading ? (
@@ -107,10 +106,10 @@ export default function SelectServicesPage() {
           )}
 
           <button onClick={handleSubmit} disabled={saving || loading} className="btn-primary w-full mt-6">
-            {saving ? 'Saving…' : `Finish (${selected.length} selected) →`}
+            {saving ? 'Saving…' : `Continue (${selected.length} selected) →`}
           </button>
           <p className="text-xs text-gray-400 text-center mt-3">
-            You can update these anytime from Profile → Skills &amp; Services.
+            Next you'll upload your ID documents for verification.
           </p>
         </div>
       </div>

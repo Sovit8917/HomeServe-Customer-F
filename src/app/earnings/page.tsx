@@ -64,7 +64,7 @@ export default function EarningsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
         {/* Wallet balance card */}
         <div className="lg:col-span-1">
-          <div className="card bg-gradient-to-br from-blue-600 to-indigo-700 text-white h-full">
+          <div className="card bg-gradient-to-br from-orange-500 to-orange-700 text-white h-full">
             <div className="flex items-center justify-between mb-4">
               <p className="text-blue-200 text-sm font-medium">Wallet Balance</p>
               <Wallet size={20} className="text-blue-300" />

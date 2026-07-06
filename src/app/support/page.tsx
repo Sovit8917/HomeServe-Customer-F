@@ -36,6 +36,10 @@ export default function SupportPage() {
   const [submitting, setSubmitting] = useState(false);
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [ticketsLoading, setTicketsLoading] = useState(true);
+  const [selected, setSelected] = useState<SupportTicket | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
 
   const loadTickets = () => {
     supportService.getTickets()
@@ -47,6 +51,34 @@ export default function SupportPage() {
   useEffect(() => {
     loadTickets();
   }, []);
+
+  const openTicket = async (t: SupportTicket) => {
+    setSelected(t);
+    setDetailLoading(true);
+    try {
+      const res = await supportService.getTicket(t.id);
+      setSelected(res.data?.data);
+    } catch {
+      toast.error('Failed to load conversation');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const sendReply = async () => {
+    if (!replyText.trim() || !selected) return;
+    setSending(true);
+    try {
+      const res = await supportService.reply(selected.id, replyText.trim());
+      const newMsg = res.data?.data;
+      setSelected((s) => (s ? { ...s, messages: [...(s.messages || []), newMsg] } : s));
+      setReplyText('');
+    } catch {
+      toast.error('Failed to send reply');
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!form.subject.trim() || !form.description.trim()) {
@@ -134,7 +166,11 @@ export default function SupportPage() {
             ) : (
               <div className="space-y-2">
                 {tickets.map((t) => (
-                  <div key={t.id} className="border border-gray-100 rounded-xl px-4 py-3">
+                  <button
+                    key={t.id}
+                    onClick={() => openTicket(t)}
+                    className="w-full text-left border border-gray-100 rounded-xl px-4 py-3 hover:border-blue-200 hover:bg-blue-50/30 transition-colors"
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-gray-800">{t.subject}</p>
                       <span className={cn('badge text-xs px-2.5 py-1 shrink-0', TICKET_STATUS_STYLE[t.status])}>
@@ -143,7 +179,7 @@ export default function SupportPage() {
                     </div>
                     <p className="text-xs text-gray-500 mt-1 line-clamp-2">{t.description}</p>
                     <p className="text-xs text-gray-400 mt-1.5">{formatDateTime(t.createdAt)}</p>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -176,6 +212,73 @@ export default function SupportPage() {
           </div>
         </div>
       </div>
+
+      {selected && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={() => { setSelected(null); setReplyText(''); }}>
+          <div
+            className="bg-white w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[85vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 px-5 py-4 border-b border-gray-100">
+              <div className="min-w-0">
+                <h3 className="font-semibold text-gray-900 truncate">{selected.subject}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={cn('badge text-xs px-2.5 py-1', TICKET_STATUS_STYLE[selected.status])}>
+                    {TICKET_STATUS_LABEL[selected.status]}
+                  </span>
+                  <span className="text-xs text-gray-400">{formatDateTime(selected.createdAt)}</span>
+                </div>
+              </div>
+              <button onClick={() => { setSelected(null); setReplyText(''); }} className="text-gray-400 hover:text-gray-600 text-xl leading-none px-1">×</button>
+            </div>
+
+            <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+              <p className="text-sm text-gray-700">{selected.description}</p>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              {detailLoading ? (
+                <p className="text-sm text-gray-400 text-center py-6">Loading conversation…</p>
+              ) : selected.messages?.length ? (
+                selected.messages.map((m) => (
+                  <div key={m.id} className={`flex ${m.senderType === 'WORKER' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={cn(
+                      'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm',
+                      m.senderType === 'WORKER' ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-gray-100 text-gray-700 rounded-bl-sm'
+                    )}>
+                      <p>{m.message}</p>
+                      <p className={cn('text-xs mt-1', m.senderType === 'WORKER' ? 'text-blue-200' : 'text-gray-400')}>
+                        {new Date(m.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-6">No replies yet — support will respond soon.</p>
+              )}
+            </div>
+
+            {selected.status !== 'CLOSED' && (
+              <div className="flex items-end gap-2 px-5 py-3 border-t border-gray-100">
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Type a reply…"
+                  rows={1}
+                  className="input-field resize-none flex-1"
+                />
+                <button
+                  onClick={sendReply}
+                  disabled={sending || !replyText.trim()}
+                  className="btn-primary !w-auto !px-4 shrink-0"
+                >
+                  <Send size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }
